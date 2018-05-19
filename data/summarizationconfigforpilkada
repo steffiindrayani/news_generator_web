@@ -1,0 +1,4 @@
+[{"new_value_type": "Persentase Suara", "operation": "Jumlah Suara/Jumlah Suara Sah*100"},
+{"new_value_type": "Persentase Partisipasi Pemilih", "operation": "Total Suara/Total Pemilih*100"},
+{"new_value_type": "Persentase Partisipasi Pemilih Disabilitas", "operation": "Jumlah Pemilih Disabilitas Pengguna Suara/Jumlah Pemilih Disabilitas*100"},
+{"new_value_type": "Persentase DPTb", "operation": "Total DPTb/Total Pemilih*100"}]

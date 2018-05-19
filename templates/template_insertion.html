@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Automated News Generator</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<body>
+  <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+          <!-- Brand and toggle get grouped for better mobile display -->
+          <div class="navbar-header">
+              <button type="button" data-target="#navbarCollapse" data-toggle="collapse" class="navbar-toggle">
+                  <span class="icon-bar">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand"><i class="fa fa-newspaper-o"></i></a>
+          </div>
+          <!-- Collection of nav links and other content for toggling -->
+          <div id="navbarCollapse" class="collapse navbar-collapse">
+              <ul class="nav navbar-nav">
+                  <li><a href="http://127.0.0.1:5000/news_generation">News Generation</a></li>
+                  <li><a href="#">Data Insertion</a></li>
+                  <li class="active"><a href="http://127.0.0.1:5000/template_insertion">Template Insertion</a></li>
+              </ul>
+          </div>
+      </div>
+  </nav>
+  <div class="jumbotron">
+      <div class="container">
+          <h1 align="center">Sistem Pembangkit Berita Otomatis</h1>
+          <p align="center">Pembangkitan Berita Pemilihan Kepala Daerah di Indonesia</p>
+      </div>
+  </div>
+  <div class="container" >
+    <div class="row grid">
+      <div class="col-xs-12 col-sm-4 col-md-4 col-lg-6 col-xl-6 card grid-item">
+        <div class="thumbnail fill-panel">
+          <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+          <div class="caption">
+            <h3 id="thumbnail-label">Isi Template</h3>
+            <p>Mengisi <i>template</i> pada form</p>
+          </div>
+          <div class="caption card-footer">
+            <button type="submit" class="btn btn-danger" data-toggle="modal" data-target="#modal-fill-template">Isi Template</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-xs-12 col-sm-4 col-md-4 col-lg-6 col-xl-6 card grid-item">
+        <div class="thumbnail upload-panel">
+          <span class="glyphicon glyphicon-open" aria-hidden="true"></span>
+          <div class="caption">
+            <h3 id="thumbnail-label">Unggah Template</h3>
+            <p>Menggunggah berkas yang berisi kumpulan <i>template</i></p>
+          </div>
+          <div class="caption card-footer">
+            <button type="submit" class="btn btn-primary" data-toggle="modal" data-target="#modal-upload-template">Unggah Template</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#modal-news">Open Modal</button> -->
+  <!-- Modal -->
+  <div class="modal fade" id="modal-fill-template" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+     <div class="modal-dialog modal-lg " role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                 <h4 class="modal-title">Isi Template</h4>
+            </div>          <!-- /modal-header -->
+            <div class="modal-body">
+                <form class="form-fill-template">
+                  <div class="form-group">
+                     <h4><label for="template" class="label-required label-title">Template:</label></h4>
+                     <input type="text" name="template" class="form-control">
+                  </div>
+                  <h4><label class="label-title">Condition:</label></h4>
+                  <div class="form-group">
+                     <label for="value_type" class="label-required">Value Type</label>
+                     <input type="text" name="value_type" class="form-control">
+                  </div>
+                  <div class="form-group">
+                      <label for="entity_type"  class="label-required">Entity Type</label>
+                      <select class="form-control" name="entity_type" data-live-search="true">
+                        <option value="Partai">Partai</option>
+                        <option value="Pasangan Calon">Pasangan Calon</option>
+                        <option value="Pemilih">Pemilih</option>
+                      </select>
+                  </div>
+                  <div class="form-group" >
+                      <label for="rank"  class="label-required">Rank</label>
+                      <div class="radio">
+                        <label><input type="radio"  name="rank" value="">All Rank</label>
+                      </div>
+                      <div class="radio">
+                        <label><input type="radio"  name="rank" value="1">First</label>
+                      </div>
+                      <div class="radio">
+                        <label><input type="radio"  name="rank" value="last">Last</label>
+                      </div>
+                      <div class="radio">
+                        <label><input type="radio"  name="rank" value="2-last">Second to Last</label>
+                      </div>
+                      <div class="radio">
+                        <label><input type="radio"  name="rank" value="2-last">Other..</label>
+                        <input type="number" class="form-control" name="new_rank" />​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​
+                      </div>
+                  </div>                  
+                </form>
+            </div>          <!-- /modal-body -->
+            <div class="modal-footer">
+                <button type="button" data-dismiss="modal" class="btn btn-danger">Kembali</button>
+                <button type="submit" class="btn btn-primary btn-fill-submit">Kirim</button>
+            </div>          <!-- /modal-footer -->
+        </div>         <!-- /modal-content -->
+    </div>     <!-- /modal-dialog -->
+  </div> <!-- /.modal -->
+    <div class="modal fade" id="modal-upload-template" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+     <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                 <h4 class="modal-title">Unggah Template</h4>
+            </div>          <!-- /modal-header -->
+            <div class="modal-body">
+              <strong>Petunjuk:</strong>
+              <p>Unggah <i>template</i> dalam berkas berekstensi <b>.csv</b></p>
+              <p><b>Format file:</b></p>
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <td><b>template</b></td>
+                    <td><b>value_type</b></td>
+                    <td><b>entity_type</b></td>
+                    <td><b>rank</b></td>
+                  </tr>
+                </thead>
+              </table>
+              <p><b>Contoh:</b></p>
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <td><b>template</b></td>
+                    <td><b>value_type</b></td>
+                    <td><b>entity_type</b></td>
+                    <td><b>rank</b></td>
+                  </tr>
+                </thead>
+                  <tr>
+                    <td>Pasangan calon <b>{{entity}}</b> unggul dengan <b>{{value}}</b> suara.</td>
+                    <td>Persentase Suara</td>
+                    <td>Pasangan Calon</td>
+                    <td>1</td>
+                  </tr>
+              </table>
+              <br>
+              <form class="upload-template-form">
+                <label for="upload-template">Unggah File:</label>
+                <input type="file" name="upload-template" accept=".csv">
+              </form>
+            </div>          <!-- /modal-body -->
+            <div class="modal-footer">
+                <button type="button" data-dismiss="modal" class="btn btn-danger">Kembali</button>
+                <button type="submit" class="btn btn-primary btn-submit">Unggah</button>
+            </div>          <!-- /modal-footer -->
+        </div>         <!-- /modal-content -->
+    </div>     <!-- /modal-dialog -->
+  </div> <!-- /.modal -->
+  <footer class="navbar-default navbar-fixed-bottom">
+      <div class="footer-copyright py-3 text-center" style="padding: 5px;">
+          © 2018 Copyright: <strong>Steffi Indrayani</strong>
+      </div>
+  </footer>
+  <script type="text/javascript" src="../static/template_insertion.js"></script>
+
+</body>
+<style type="text/css">
+.glyphicon {
+  font-size: 750%;
+  display:block;
+  text-align:center;
+  margin-top: 4%
+}
+.caption {
+  display:block;
+  text-align:center;
+}
+.upload-panel {
+  background-color: aliceblue;
+  border-color: aliceblue;
+  padding-bottom: 4%;
+}
+.fill-panel {
+  background-color: cornsilk;
+  border-color: cornsilk;
+  padding-bottom: 4%
+}
+.label-required:after{
+  content: " *";
+  color: firebrick;
+  font-weight: bold;    
+}
+.label-title {
+  color: dimgrey;
+}
+.modal {
+  text-align: center;
+  padding: 0!important;
+}
+
+.modal:before {
+  content: '';
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
+  margin-right: -4px;
+}
+
+.modal-dialog {
+  display: inline-block;
+  text-align: left;
+  vertical-align: middle;
+}
+</style>
+
+</html>
