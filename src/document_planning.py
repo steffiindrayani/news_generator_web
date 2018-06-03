@@ -20,6 +20,9 @@ def documentPlanning(query, request):
     contents = contentDetermination(query, request)
     print("structuring document...")
     documentPlan = documentStructuring(contents, request)
+    for contents in documentPlan:
+        for content in contents:
+            content["value"] = str(content["value"])
     return documentPlan
 
 def contentDetermination(query,request):
@@ -66,20 +69,6 @@ def dataRankSummarization(contents):
                 rank +=1
             item["rank"] = rank
         contents.extend(content)
-    # value_types = ["Persentase Partisipasi Pemilih"]
-    # for value_type in value_types:
-    #     content = [item for item in contents if item["value_type"] == value_type]
-    #     contents = [item for item in contents if item not in content]
-    #     content = sorted(content, key=operator.itemgetter('location_type','value'), reverse=True)
-    #     location_type = ""
-    #     for item in content:
-    #         if item["location_type"] != location_type:
-    #             location_type = item["location_type"]
-    #             rank = 1
-    #         else:
-    #             rank +=1
-    #         item["rank"] = rank
-    #     contents.extend(content)
     return contents
             
 def generateSummarizationQuery(rule, request):
@@ -88,7 +77,7 @@ def generateSummarizationQuery(rule, request):
         operands = operation[0::2]
         operands = [x.lower() for x in operands if not x.isnumeric()]
         #generate query
-        query = "SELECT table0.entity_type, table0.entity, table0.location_type, table0.location, table0.value_type, round(%s,0) as value, table0.event_type, table0.event FROM" % (rule["operation"].lower().replace(" ", ""))
+        query = "SELECT table0.entity_type, table0.entity, table0.location_type, table0.location, table0.value_type, round(%s,2) as value, table0.event_type, table0.event FROM" % (rule["operation"].lower().replace(" ", ""))
         i = 0 
         for operand in operands:
             if i > 0:
@@ -100,6 +89,7 @@ def generateSummarizationQuery(rule, request):
         query += " AND table0.event = '%s'" % (request["event"])
         if (request["calon"] != ""):
             query += " AND (table0.entity='%s' OR table0.entity_type ='pemilih')" % (request["calon"])
+        query += " AND (table0.entity = table1.entity OR table1.entity_type = 'pemilih')" 
         for idx in range(i):
             if idx > 0:
                 query += " AND table" + str(idx - 1) + ".location = table" + str(idx) + ".location"
@@ -152,15 +142,10 @@ def orderContentByValueTypeGroup(contentsList):
 def orderContentByLocation(contentsList):
     results = []
     for contents in contentsList:
-        #result = collections.defaultdict(list)        
-        #for content in contents:
-            #result[content['location']].append(content)
-        #results.extend(result.values())
         contents = sorted(contents, key=itemgetter('location'))
         results.append(contents)
     return results
-    
-    
+        
 def sortContentByRank(contentsList):
     results = []
     for contents in contentsList:

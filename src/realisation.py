@@ -8,6 +8,7 @@ Created on Sat Mar 31 16:47:32 2018
 import re
 import locale
 from src.input_handler import entityFactRetrieval
+from num2words import num2words
 
 def realisation(textSpecification):
     print("linguistic realisation...")
@@ -28,7 +29,7 @@ def linguisticRealisation(textSpecification):
                 sentence = sentence.replace("{{event}}", contents[i]['event'])
                 
                 if "rank" in contents[i]:
-                    sentence = sentence.replace("{{rank}}", "ke-" + str(contents[i]['rank']))
+                    sentence = sentence.replace("{{rank}}", generateRank(contents[i]['rank']))
                 
                 if i + 1 < len(contents):            
                     sentence = sentence.replace("{{value1}}", generateValue(contents[i+1]['value']))
@@ -36,13 +37,16 @@ def linguisticRealisation(textSpecification):
                 sentence = sentence.replace("{{value}}", generateValue(contents[i]['value']))
 
                 if "REG" in contents[i]:
-                    r1 = re.compile(re.escape("pasangan"), re.IGNORECASE)
-                    r2 = re.compile(re.escape("calon"), re.IGNORECASE)
-                    r3 = re.compile(re.escape("paslon"), re.IGNORECASE)
-                    sentence = r1.sub('', sentence)
-                    sentence = r2.sub('', sentence)
-                    sentence = r3.sub('', sentence)
-                    sentence = sentence.replace("{{entity}}", generateRE(contents[i]["entity_type"], contents[i]["entity"]))
+                    if (contents[i]["REG"] == "True"):
+                        r1 = re.compile(re.escape("pasangan"), re.IGNORECASE)
+                        r2 = re.compile(re.escape("calon"), re.IGNORECASE)
+                        r3 = re.compile(re.escape("paslon"), re.IGNORECASE)
+                        sentence = r1.sub('', sentence)
+                        sentence = r2.sub('', sentence)
+                        sentence = r3.sub('', sentence)
+                        sentence = sentence.replace("{{entity}}", generateRE(contents[i]["entity_type"], contents[i]["entity"], alias=False))
+                    else:
+                        sentence = sentence.replace("{{entity}}", generateRE(contents[i]["entity_type"], contents[i]["entity"], alias=True))
                 else:
                     sentence = sentence.replace("{{entity}}", contents[i]['entity'])        
                 #validation
@@ -65,20 +69,29 @@ def structureRealisation(textSpecification):
                 
 def generateValue(value):    
     locale.setlocale(locale.LC_NUMERIC, 'IND')
-    if isinstance(value, float) or value.isnumeric():
+    if isinstance(value, float):
+        value = locale.format("%.*f", (2, value), True)
+    elif value.isnumeric():
         value = int(value)
-        value = locale.format("%.*f", (0, value), True)     
+        value = locale.format("%.*f", (0, value), True)        
     return str(value)
     
-def generateRE(entity_type, entity):
+def generateRE(entity_type, entity, alias):
     re = ""
-    query = "SELECT id, entity_type, value_type, value FROM entity_fact WHERE entity = '%s' and value_type = 'alias'" % (entity)
-    re = entityFactRetrieval(query)
-    if re == "":
+    if alias:
+        query = "SELECT id, entity_type, value_type, value FROM entity_fact WHERE entity = '%s' and value_type = 'alias'" % (entity)
+        re = entityFactRetrieval(query)
+    else:
         query = "SELECT id, entity_type, value_type, value FROM entity_fact WHERE entity = '%s' ORDER BY number_of_selection DESC LIMIT 1" % (entity)
-    re = entityFactRetrieval(query)
+        re = entityFactRetrieval(query)
     if re == "":
         return entity_type + " tersebut"
     else:
         return re
+
+def generateRank(number):
+    if number == 1:
+        return 'pertama'
+    else:
+        return "ke" + num2words(number, lang='id')
             

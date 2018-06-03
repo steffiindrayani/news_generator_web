@@ -43,10 +43,21 @@ def lexicalisation(documentPlan, request):
                 
                 
 def assignREG(documentPlan):
+    entity = []
     for contents in documentPlan:
         for i in range (0, len(contents) - 1):
             if (contents[i]["entity"] == contents[i+1]["entity"]):
                 contents[i+1]["REG"] = "True"
+            else:
+                if contents[i+1]["entity"] in entity:
+                    contents[i+1]["REG"] = "Alias"
+                else:
+                    entity.append(contents[i+1]["entity"])
+            if i == 0:
+                if contents[i]["entity"] in entity:
+                    contents[i]["REG"] = "Alias"
+                else:
+                    entity.append(contents[i]["entity"])
 
 # def aggregation(documentPlan):
 #     for contents in documentPlan:
@@ -68,6 +79,13 @@ def aggregation(documentPlan):
             deprecatedContents.append(i)
     if len(deprecatedContents) > 0:
         documentPlan = mergeGroups(documentPlan, deprecatedContents)
+        deprecatedContents = []
+        for i in range(0, len(documentPlan)):
+            if not isValidContents(documentPlan[i]):
+                print("here")
+                deprecatedContents.append(i)
+        if len(deprecatedContents) > 0:
+            documentPlan = mergeGroups1(documentPlan, deprecatedContents)
     return documentPlan
         
 def aggregateUsingTemplate(contents):
@@ -99,9 +117,9 @@ def aggregateSimilarSentences(contents):
                 else:
                     contents[idx]["template"] = ", sedangkan " + contents[idx]["template"][:1].lower() + contents[idx]["template"][1:] 
                 if (contents[i]["location"] == contents[idx]["location"]):
-                    contents[idx]["template"] = contents[idx]["template"].replace(" di {{location}}", "")
                     contents[idx]["template"] = contents[idx]["template"].replace(" di {{location}},", "")
-                    aggregated = True
+                    contents[idx]["template"] = contents[idx]["template"].replace(" di {{location}}", "")
+                aggregated = True
             else:
                 aggregated = False
             idx = i
@@ -207,9 +225,38 @@ def mergeGroups(documentPlan, deprecatedContents):
     appendedContents = []
     for i in deprecatedContents:
         for j in range(0, len(documentPlan)):
-            if i != j and j not in appendedContents:
+            if i != j and j not in appendedContents and i not in appendedContents:
                 for content in documentPlan[j]:
                     if documentPlan[i][0]["entity_type"] == content["entity_type"] and (documentPlan[i][0]["location_type"] == content["location_type"] or documentPlan[i][0]["value_type"] == content["value_type"]):
+                        if (i < j):
+                            newGroup.append((i,j))
+                        else:
+                            newGroup.append((j,i))
+                        appendedContents.append(i)
+                        appendedContents.append(j)
+                        break
+    newGroup = dict(sorted(newGroup))
+    appendedContents = []
+    newDocumentPlan = []
+    for i in range(0, len(documentPlan)):
+        if i not in appendedContents:
+            if i in newGroup:
+                newContent = documentPlan[i] + documentPlan[newGroup[i]]
+                appendedContents.append(newGroup[i])
+                newDocumentPlan.append(newContent)
+            else:
+                newDocumentPlan.append(documentPlan[i])
+    return newDocumentPlan
+
+def mergeGroups1(documentPlan, deprecatedContents):
+    deprecatedContents = sorted(deprecatedContents)
+    newGroup = []
+    appendedContents = []
+    for i in deprecatedContents:
+        for j in range(0, len(documentPlan)):
+            if i != j and j not in appendedContents and i not in appendedContents:
+                for content in documentPlan[j]:
+                    if documentPlan[i][0]["entity_type"] == content["entity_type"] or (documentPlan[i][0]["location_type"] == content["location_type"] or documentPlan[i][0]["value_type"] == content["value_type"]):
                         if (i < j):
                             newGroup.append((i,j))
                         else:
