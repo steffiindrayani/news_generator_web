@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request
-from model import focusRetrieval, yearRetrieval, levelRetrieval, locationRetrieval, cycleRetrieval, valueTypeRetrieval, entityRetrieval, subLocationRetrieval, getTimeAndLocation
+from model import focusRetrieval, yearRetrieval, levelRetrieval, locationRetrieval, cycleRetrieval, valueTypeRetrieval, entityRetrieval, subLocationRetrieval, getTimeAndLocation, templateDBInsertion
 import json
 from tkinter import *
 from tkinter import filedialog
@@ -12,6 +12,10 @@ app = Flask(__name__)
 def queryInsertion():
 	year = yearRetrieval()
 	return render_template('news_generation.html', year = year)
+
+@app.route('/template_insertion', methods = ['GET'])
+def templateInsertion():
+    return render_template('template_insertion.html')
 
 @app.route('/getLevel', methods=['POST'])
 def getLevel():
@@ -80,8 +84,14 @@ def downloadNews():
     f.close() # `()` w 
     return json.dumps({"status": "ok"})
 
-
-
+@app.route('/insertTemplate', methods=['POST'])
+def insertTemplate():
+    template =  request.form['template']
+    value_type =  request.form['value_type']
+    rank =  request.form['rank']
+    focus =  request.form['entity_type']
+    status = templateDBInsertion(template, value_type, rank, focus)
+    return json.dumps({"status": status})
 
 if __name__ == '__main__':
    app.run(debug = True)

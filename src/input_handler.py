@@ -74,9 +74,9 @@ def readQuery(request):
     daerah = request["location"][0]
     putaran = request["cycle"][0]
     #Define cycle in text form
-    if (putaran == 1):
+    if (putaran == '1'):
         putaran = "Pertama"
-    else:
+    elif (putaran == '2'):
         putaran = "Kedua"
     lokasi = request["sublocation"][0]
     value_type = request["value_type"]

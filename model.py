@@ -15,7 +15,7 @@ def connectDB(dbName):
 
 def focusRetrieval(year, level, location, cycle):
     db, cursor = connectDB(dbname)
-    query = "SELECT DISTINCT entity_type FROM input_data, event WHERE input_data.event = event.event AND year=%s AND level='%s' AND event.location='%s' AND cycle=%s" % (year, level, location, cycle)
+    query = "SELECT DISTINCT entity_type FROM input_data, event WHERE input_data.event = event.event AND year=%s AND level='%s' AND event.location='%s' AND cycle='%s'" % (year, level, location, cycle)
     entity_type = []
     try:
         cursor.execute(query)
@@ -89,7 +89,7 @@ def valueTypeRetrieval(focus, year, level, location, cycle):
         foc = "(input_data.entity_type = 'Pasangan Calon' OR input_data.entity_type = 'Pemilih')"
     else:
         foc = "input_data.entity_type = '" + focus + "'"
-    query = "SELECT DISTINCT input_data.value_type FROM input_data, event, template WHERE input_data.value_type = template.value_type AND input_data.event = event.event AND %s AND year='%s' AND level='%s' AND cycle = %s AND event.location='%s'" % (foc, year, level, cycle, location)
+    query = "SELECT DISTINCT input_data.value_type FROM input_data, event, template WHERE input_data.value_type = template.value_type AND input_data.event = event.event AND %s AND year='%s' AND level='%s' AND cycle = '%s' AND event.location='%s'" % (foc, year, level, cycle, location)
     value_type = []
     try:
         cursor.execute(query)
@@ -113,7 +113,7 @@ def derivedValueTypeRetrieval(focus):
 
 def giveDefaultInfo(types):
     value_type = []
-    defaultType = ["Jumlah Suara", "Persentase Partisipasi Pemilih", "Jumlah Suara Sah", "Total DPT", "Persentase Partisipasi Pemilih", "Persentase Suara"]
+    defaultType = ["Jumlah Suara", "Total Kemenangan", "Persentase Partisipasi Pemilih", "Jumlah Suara Sah", "Total DPT", "Persentase Partisipasi Pemilih", "Persentase Suara"]
     for vtype in types:
         if vtype in defaultType:
             value_type.append((vtype, "default"))
@@ -126,7 +126,7 @@ def entityRetrieval(focus, year, level, location, cycle):
     entity = []
     if focus != "Pemilih":
         db, cursor = connectDB(dbname)
-        query = "SELECT DISTINCT entity FROM input_data, event WHERE input_data.event = event.event AND entity_type='%s' AND year='%s' AND level='%s' AND cycle = %s AND event.location='%s'" % (focus, year, level, cycle, location)
+        query = "SELECT DISTINCT entity FROM input_data, event WHERE input_data.event = event.event AND entity_type='%s' AND year='%s' AND level='%s' AND cycle = '%s' AND event.location='%s'" % (focus, year, level, cycle, location)
         try:
             cursor.execute(query)
             results = cursor.fetchall()
@@ -140,7 +140,7 @@ def entityRetrieval(focus, year, level, location, cycle):
 def subLocationRetrieval(focus, year, level, location, cycle):
     sublocation = []
     db, cursor = connectDB(dbname)
-    query = "SELECT DISTINCT input_data.location FROM input_data, event WHERE input_data.event = event.event AND entity_type='%s' AND year='%s' AND level='%s' AND cycle = %s AND event.location='%s'" % (focus, year, level, cycle, location)
+    query = "SELECT DISTINCT input_data.location FROM input_data, event WHERE input_data.event = event.event AND entity_type='%s' AND year='%s' AND level='%s' AND cycle = '%s' AND event.location='%s'" % (focus, year, level, cycle, location)
     try:
         cursor.execute(query)
         results = cursor.fetchall()
@@ -155,3 +155,18 @@ def getTimeAndLocation():
     city = "Bandung"
     time = datetime.now().strftime('%Y-%m-%d,%H:%M:%S')
     return city, time
+
+def templateDBInsertion(template, value_type, rank, focus):
+    db, cursor = connectDB(dbname)
+    query = "INSERT INTO template (template, value_type, rank, entity_type, number_of_selection) VALUES ('%s', '%s', '%s', '%s', 0)" % (template, value_type, rank
+        , focus)
+    print(query)
+    try:
+       cursor.execute(query)
+       db.commit()
+       status = "ok"
+    except:
+       db.rollback()
+       status = "error"
+    db.close()
+    return status

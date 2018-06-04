@@ -25,7 +25,7 @@
           <!-- Collection of nav links and other content for toggling -->
           <div id="navbarCollapse" class="collapse navbar-collapse">
               <ul class="nav navbar-nav">
-                  <li><a href="http://127.0.0.1:5000/news_generation">News Generation</a></li>
+<!--                   <li><a href="http://127.0.0.1:5000/news_generation">News Generation</a></li> -->
                   <!-- <li><a href="#">Data Insertion</a></li> -->
                   <li class="active"><a href="http://127.0.0.1:5000/template_insertion">Template Insertion</a></li>
               </ul>
@@ -80,40 +80,29 @@
                 <form class="form-fill-template">
                   <div class="form-group">
                      <h4><label for="template" class="label-required label-title">Template:</label></h4>
-                     <input type="text" name="template" class="form-control">
+                     <input type="text" name="template" class="form-control required">
                   </div>
                   <h4><label class="label-title">Condition:</label></h4>
                   <div class="form-group">
                      <label for="value_type" class="label-required">Value Type</label>
-                     <input type="text" name="value_type" class="form-control">
+                     <input type="text" name="value_type" class="form-control required">
                   </div>
                   <div class="form-group">
                       <label for="entity_type"  class="label-required">Entity Type</label>
-                      <select class="form-control" name="entity_type" data-live-search="true">
+                      <select class="form-control required" name="entity_type" data-live-search="true">
                         <option value="Partai">Partai</option>
                         <option value="Pasangan Calon">Pasangan Calon</option>
                         <option value="Pemilih">Pemilih</option>
                       </select>
                   </div>
-                  <div class="form-group" >
+                  <div class="form-group">
                       <label for="rank"  class="label-required">Rank</label>
-                      <div class="radio">
-                        <label><input type="radio"  name="rank" value="">All Rank</label>
-                      </div>
-                      <div class="radio">
-                        <label><input type="radio"  name="rank" value="1">First</label>
-                      </div>
-                      <div class="radio">
-                        <label><input type="radio"  name="rank" value="last">Last</label>
-                      </div>
-                      <div class="radio">
-                        <label><input type="radio"  name="rank" value="2-last">Second to Last</label>
-                      </div>
-                      <div class="radio">
-                        <label><input type="radio"  name="rank" value="2-last">Other..</label>
-                        <input type="number" class="form-control" name="new_rank" />​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​
-                      </div>
-                  </div>                  
+                      <select class="form-control required" name="rank" data-live-search="true">
+                        <option value="NULL">All Rank</option>
+                        <option value="1">First</option>
+                        <option value="2-last">Second to Last</option>
+                      </select>
+                  </div>             
                 </form>
             </div>          <!-- /modal-body -->
             <div class="modal-footer">
