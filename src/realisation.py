@@ -81,13 +81,17 @@ def generateRE(entity_type, entity, alias):
     if alias:
         query = "SELECT id, entity_type, value_type, value FROM entity_fact WHERE entity = '%s' and value_type = 'alias'" % (entity)
         re = entityFactRetrieval(query)
+        if re == "":
+            return entity
+        else:
+            return re
     else:
         query = "SELECT id, entity_type, value_type, value FROM entity_fact WHERE entity = '%s' ORDER BY number_of_selection DESC LIMIT 1" % (entity)
         re = entityFactRetrieval(query)
-    if re == "":
-        return entity_type + " tersebut"
-    else:
-        return re
+        if re == "":
+            return entity_type + " tersebut"
+        else:
+            return re
 
 def generateRank(number):
     if number == 1:

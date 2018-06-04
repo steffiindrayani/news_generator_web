@@ -86,10 +86,10 @@ def cycleRetrieval(year, level, location):
 def valueTypeRetrieval(focus, year, level, location, cycle):
     db, cursor = connectDB(dbname)
     if focus == "Pasangan Calon":
-        focus = "(entity_type = 'Pasangan Calon' OR entity_type = 'Pemilih')"
+        foc = "(input_data.entity_type = 'Pasangan Calon' OR input_data.entity_type = 'Pemilih')"
     else:
-        focus = "entity_type = '" + focus + "'"
-    query = "SELECT DISTINCT value_type FROM input_data, event WHERE input_data.event = event.event AND %s AND year='%s' AND level='%s' AND cycle = %s AND event.location='%s'" % (focus, year, level, cycle, location)
+        foc = "input_data.entity_type = '" + focus + "'"
+    query = "SELECT DISTINCT input_data.value_type FROM input_data, event, template WHERE input_data.value_type = template.value_type AND input_data.event = event.event AND %s AND year='%s' AND level='%s' AND cycle = %s AND event.location='%s'" % (foc, year, level, cycle, location)
     value_type = []
     try:
         cursor.execute(query)
@@ -99,15 +99,28 @@ def valueTypeRetrieval(focus, year, level, location, cycle):
     except:
         print('information does not exist')
     db.close()
-    value_type.extend(derivedValueTypeRetrieval())
+    value_type.extend(derivedValueTypeRetrieval(focus))
+    value_type = giveDefaultInfo(value_type)
     return value_type
 
-def derivedValueTypeRetrieval():
+def derivedValueTypeRetrieval(focus):
     value_type = []
     data = json.load(open(summarizationconfig))
     for rule in data:
-        value_type.append(rule["new_value_type"])
+        if rule["entity_type"] == focus or focus == "Pasangan Calon":
+           value_type.append(rule["new_value_type"])
     return value_type
+
+def giveDefaultInfo(types):
+    value_type = []
+    defaultType = ["Jumlah Suara", "Persentase Partisipasi Pemilih", "Jumlah Suara Sah", "Total DPT", "Persentase Partisipasi Pemilih", "Persentase Suara"]
+    for vtype in types:
+        if vtype in defaultType:
+            value_type.append((vtype, "default"))
+        else:
+            value_type.append((vtype, "nondefault"))
+    value_type = sorted(value_type, key=lambda tup: tup[1])
+    return [ "%s,%s" % x for x in value_type]
 
 def entityRetrieval(focus, year, level, location, cycle):
     entity = []

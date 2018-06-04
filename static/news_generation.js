@@ -128,8 +128,13 @@ function showFields() {
                 $(".sublocation").removeClass("hidden")
                 value_type = JSON.parse(response).value_type
                 for (i = 0; i < value_type.length; i++) {
-                	$('#value_type').append("<div class='form-check'></div>").append($('<input></input>').attr({'type': 'checkbox', 'name':'value_type', 'value': value_type[i]}))
-                 	$('#value_type').append("<label class='form-check-label' style='font-weight: normal'>  "+ value_type[i] +"</label>")
+                	vtype = value_type[i].split(",")
+                	if (vtype[1] == "default") {
+                		$('#value_type').append("<div class='form-check'></div>").append($('<input></input>').attr({'type': 'checkbox', 'name':'value_type', 'value': vtype[0], 'checked': true}))
+                	} else {
+                 		$('#value_type').append("<div class='form-check'></div>").append($('<input></input>').attr({'type': 'checkbox', 'name':'value_type', 'value': vtype[0]}))
+                 	}
+                 	$('#value_type').append("<label class='form-check-label' style='font-weight: normal'>  "+ vtype[0] +"</label>")
                 }
                 $(".value_type").removeClass("hidden")
                 if ($("#focus").val() != "Pemilih") {

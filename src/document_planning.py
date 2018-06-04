@@ -55,7 +55,7 @@ def generateDerivedContents(request):
     return derivedContents
     
 def dataRankSummarization(contents):
-    value_types = ["Persentase Suara", "Jumlah Suara"]
+    value_types = ["Persentase Suara", "Jumlah Suara", "Total Kemenangan", "Jumlah Kemenangan Tingkat Gubernur", "Jumlah Kemenangan Tingkat Walikota", "Jumlah Kemenangan Tingkat Bupati"]
     for value_type in value_types:
         content = [item for item in contents if item["value_type"] == value_type]
         contents = [item for item in contents if item not in content]
