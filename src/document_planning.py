@@ -77,7 +77,7 @@ def generateSummarizationQuery(rule, request):
         operands = operation[0::2]
         operands = [x.lower() for x in operands if not x.isnumeric()]
         #generate query
-        query = "SELECT table0.entity_type, table0.entity, table0.location_type, table0.location, table0.value_type, round(%s,2) as value, table0.event_type, table0.event FROM" % (rule["operation"].lower().replace(" ", ""))
+        query = "SELECT table0.entity_type, table0.entity, table0.location_type, table0.location, table0.value_type, round(%s,0) as value, table0.event_type, table0.event FROM" % (rule["operation"].lower().replace(" ", ""))
         i = 0 
         for operand in operands:
             if i > 0:

@@ -82,7 +82,6 @@ def aggregation(documentPlan):
         deprecatedContents = []
         for i in range(0, len(documentPlan)):
             if not isValidContents(documentPlan[i]):
-                print("here")
                 deprecatedContents.append(i)
         if len(deprecatedContents) > 0:
             documentPlan = mergeGroups1(documentPlan, deprecatedContents)
@@ -110,12 +109,18 @@ def aggregateSimilarSentences(contents):
         if contents[i]["id_template"] != 0:
             if contents[i]["id_template"] == contents[idx]["id_template"]:
                 #remove tanda titik dan perkecil kata kedua, konjungsi random, cek pernah gak
-                contents[i]["template"] = contents[i]["template"].rstrip('.')
                 contents[i]["aggregated"] = 'True' 
-                if aggregated:
-                    contents[idx]["template"] = ", " + contents[idx]["template"][:1].lower() + contents[idx]["template"][1:] 
+                if (contents[i]["value"] == contents[idx]["value"]):
+                    contents[i]["template"] = contents[i]["template"].replace("{{value}},", "")
+                    contents[i]["template"] = contents[i]["template"].replace("{{value}}", "")
+                    conjunction = "dan"
                 else:
-                    contents[idx]["template"] = ", sedangkan " + contents[idx]["template"][:1].lower() + contents[idx]["template"][1:] 
+                    conjunction = "sedangkan"
+                contents[i]["template"] = contents[i]["template"].rstrip('.').rsplit("}",1)[0] + "}"
+                if aggregated:
+                    contents[idx]["template"] = ", {" + contents[idx]["template"].split("{", 1)[1].rsplit("}",1)[0] + "}"
+                else:
+                    contents[idx]["template"] = " " + conjunction + " {" + contents[idx]["template"].split("{", 1)[1] 
                 if (contents[i]["location"] == contents[idx]["location"]):
                     contents[idx]["template"] = contents[idx]["template"].replace(" di {{location}},", "")
                     contents[idx]["template"] = contents[idx]["template"].replace(" di {{location}}", "")

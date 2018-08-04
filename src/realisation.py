@@ -70,10 +70,11 @@ def structureRealisation(textSpecification):
 def generateValue(value):    
     locale.setlocale(locale.LC_NUMERIC, 'IND')
     if isinstance(value, float):
-        value = locale.format("%.*f", (2, value), True)
+        value = int(value)
+        value = locale.format("%.*f", (0, value), True)  
     elif value.isnumeric():
         value = int(value)
-        value = locale.format("%.*f", (0, value), True)        
+        value = locale.format("%.*f", (0, value), True)  
     return str(value)
     
 def generateRE(entity_type, entity, alias):
